@@ -1,0 +1,723 @@
+:root {
+    --bg-primary: #0f0f0f;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #242424;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #666666;
+    --accent-primary: #10b981;
+    --accent-secondary: #059669;
+    --accent-glow: rgba(16, 185, 129, 0.2);
+    --border-color: #2a2a2a;
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --radius: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+/* Экраны */
+.screen {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+    padding: 20px;
+    padding-top: 1px;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Заголовок приложения */
+.app-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.app-title {
+    font-family: 'Scheherazade New', serif;
+    font-size: 52px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent-primary), #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+}
+
+.app-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 300;
+}
+
+/* Секции */
+.section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* Карточка аята */
+.ayat-section {
+    margin-bottom: 32px;
+}
+
+/* Счётчик Уммы */
+.ummah-section {
+    margin-bottom: 24px;
+}
+
+.ummah-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.ummah-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--accent-glow), transparent);
+    opacity: 0.2;
+}
+
+.ummah-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.ummah-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ummah-count {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Карточка аята */
+.ayat-section {
+    margin-bottom: 32px;
+}
+
+.ayat-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 28px;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.ayat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+    opacity: 0.5;
+}
+
+.ayat-arabic {
+    font-family: 'Scheherazade New', serif;
+    font-size: 32px;
+    line-height: 2;
+    text-align: right;
+    direction: rtl;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.ayat-translation {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-weight: 300;
+}
+
+.ayat-reference {
+    font-size: 12px;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* Карточка ифтара */
+.iftar-section {
+    margin-bottom: 24px;
+}
+
+.iftar-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.iftar-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.iftar-timer {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 8px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 3px;
+}
+
+.iftar-message {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+/* Секция поста */
+.fasting-section {
+    margin-bottom: 32px;
+}
+
+/* Прогресс Рамадана */
+.progress-section {
+    margin-bottom: 32px;
+}
+
+.progress-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 24px;
+    border: 1px solid var(--border-color);
+}
+
+.progress-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.progress-text span {
+    color: var(--accent-primary);
+    font-size: 24px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 12px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 12px;
+    width: 0%;
+    transition: width 1s ease-out;
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.progress-percentage {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Достижения */
+.achievements-section {
+    margin-bottom: 32px;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.achievement-badge {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-badge.locked {
+    opacity: 0.4;
+}
+
+.achievement-badge.unlocked {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.05));
+    opacity: 1;
+    animation: badgeUnlock 0.5s ease-out;
+}
+
+@keyframes badgeUnlock {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.badge-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.badge-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.achievement-badge.unlocked .badge-text {
+    color: var(--accent-primary);
+}
+
+/* Секция поста */
+.fasting-section {
+    margin-bottom: 32px;
+}
+
+.fasting-button {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    border-radius: var(--radius);
+    padding: 20px 32px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 4px 16px var(--accent-glow);
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.fasting-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px var(--accent-glow);
+}
+
+.fasting-button:active {
+    transform: translateY(0);
+}
+
+.fasting-button.completed {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--accent-primary);
+    box-shadow: none;
+}
+
+.button-icon {
+    font-size: 20px;
+}
+
+.fasting-streak {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.fasting-streak.visible {
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+/* Кнопка поделиться */
+.share-button {
+    width: 100%;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--accent-primary);
+    border-radius: var(--radius);
+    padding: 18px 32px;
+    color: var(--accent-primary);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+}
+
+.share-button:hover {
+    background: var(--accent-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.share-button:active {
+    transform: translateY(0);
+}
+
+.share-button.hidden {
+    display: none;
+}
+
+/* Календарь */
+.calendar-section {
+    margin-bottom: 32px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.calendar-day:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.calendar-day.completed {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-color: var(--accent-primary);
+    color: white;
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.calendar-day.completed::after {
+    content: '✓';
+    position: absolute;
+    font-size: 20px;
+    color: white;
+}
+
+.calendar-stats {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+/* Намаз */
+.prayer-section {
+    margin-bottom: 32px;
+}
+
+.next-prayer-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.next-prayer-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--accent-glow), transparent);
+    opacity: 0.3;
+}
+
+.next-prayer-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.next-prayer-name {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 16px;
+}
+
+.next-prayer-countdown {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+}
+
+.prayer-times-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.prayer-item {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.prayer-item:hover {
+    border-color: var(--accent-primary);
+}
+
+.prayer-item.active {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+}
+
+.prayer-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.prayer-time {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-primary);
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 480px;
+    width: 100%;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 1000;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+
+.nav-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.nav-item.active {
+    color: var(--accent-primary);
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Анимации загрузки */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 380px) {
+    .app-title {
+        font-size: 40px;
+    }
+    
+    .ayat-arabic {
+        font-size: 24px;
+    }
+    
+    .iftar-timer {
+        font-size: 28px;
+    }
+    
+    .iftar-icon {
+        font-size: 28px;
+    }
+    
+    .ummah-count {
+        font-size: 32px;
+    }
+    
+    .ummah-icon {
+        font-size: 24px;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    
+    .badge-icon {
+        font-size: 28px;
+    }
+    
+    .badge-text {
+        font-size: 10px;
+    }
+    
+    .calendar-grid {
+        gap: 8px;
+    }
+    
+    .stat-value {
+        font-size: 40px;
+    }
+}
+
+/* Темная тема Telegram */
+body.dark-theme {
+    background: var(--bg-primary);
+}
