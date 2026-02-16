@@ -216,7 +216,7 @@ document.getElementById('share-button').addEventListener('click', () => {
     const streak = calculateStreak(fastingDays);
     
     // URL приложения (замените на реальный URL вашего приложения)
-    const appUrl = 'https://t.me/YOUR_BOT_NAME/noor';
+    const appUrl = 'https://t.me/noor_umra_bot/Noor';
     
     // Формирование текста
     const text = `Я соблюдаю пост уже ${streak} ${getDaysWord(streak)} подряд 🌙 Присоединяйся к Noor Ramadan`;
