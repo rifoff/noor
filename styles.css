@@ -42,7 +42,7 @@ body {
     display: none;
     animation: fadeIn 0.3s ease-in-out;
     padding: 20px;
-    padding-top: 1px;
+    padding-top: 40px;
 }
 
 .screen.active {
@@ -484,6 +484,11 @@ body {
 .calendar-day:hover {
     border-color: var(--accent-primary);
     transform: translateY(-2px);
+}
+
+.calendar-day.today {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
 }
 
 .calendar-day.completed {
