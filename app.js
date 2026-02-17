@@ -1,3 +1,59 @@
+// ===== ЗАЩИТА: ТОЛЬКО TELEGRAM =====
+(function() {
+    const isTelegram = window.Telegram &&
+                       window.Telegram.WebApp &&
+                       window.Telegram.WebApp.initData &&
+                       window.Telegram.WebApp.initData.length > 0;
+
+    if (!isTelegram) {
+        document.body.innerHTML = `
+            <div style="
+                min-height: 100vh;
+                background: #0f0f0f;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Outfit', sans-serif;
+                text-align: center;
+                padding: 40px 24px;
+                gap: 20px;
+            ">
+                <div style="font-size: 64px;">🌙</div>
+                <div style="
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: #10b981;
+                    font-family: 'Scheherazade New', serif;
+                ">نور</div>
+                <div style="
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #ffffff;
+                    margin-top: 8px;
+                ">Приложение доступно только в Telegram</div>
+                <div style="
+                    font-size: 14px;
+                    color: #a0a0a0;
+                    line-height: 1.6;
+                    max-width: 280px;
+                ">Откройте приложение через бота в Telegram, чтобы продолжить</div>
+                <a href="https://t.me/noor_umra_bot" style="
+                    margin-top: 12px;
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    color: white;
+                    text-decoration: none;
+                    padding: 16px 32px;
+                    border-radius: 16px;
+                    font-size: 16px;
+                    font-weight: 600;
+                ">Открыть в Telegram</div>
+            </div>
+        `;
+        return;
+    }
+})();
+
 // ===== ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP =====
 let tg = window.Telegram.WebApp;
 tg.ready();
@@ -248,7 +304,7 @@ function showShareButton() {
 
 document.getElementById('share-button').addEventListener('click', () => {
     const streak = calculateStreak();
-    const appUrl = 'https://t.me/YOUR_BOT_NAME/noor';
+    const appUrl = 'https://t.me/noor_umra_bot/Noor';
     const text = `Я соблюдаю пост уже ${streak} ${getDaysWord(streak)} подряд 🌙 Присоединяйся к Noor Ramadan`;
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(text)}`;
     tg.openTelegramLink(shareUrl);
