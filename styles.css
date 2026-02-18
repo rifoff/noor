@@ -37,6 +37,92 @@ body {
     padding-bottom: 80px;
 }
 
+/* Переключатель языка */
+.language-selector {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1001;
+}
+
+.language-button {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.language-button:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+}
+
+.language-dropdown {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 140px;
+    box-shadow: var(--shadow);
+}
+
+.language-dropdown.hidden {
+    display: none;
+}
+
+.language-option {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.language-option:hover {
+    background: var(--bg-tertiary);
+    color: var(--accent-primary);
+}
+
+/* RTL Support */
+[dir="rtl"] {
+    direction: rtl;
+}
+
+[dir="rtl"] .language-selector {
+    right: auto;
+    left: 16px;
+}
+
+[dir="rtl"] .language-dropdown {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .language-option {
+    text-align: right;
+}
+
+[dir="rtl"] .ayat-arabic {
+    direction: rtl !important;
+}
+
 /* Экраны */
 .screen {
     display: none;
