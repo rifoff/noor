@@ -38,7 +38,7 @@
                     line-height: 1.6;
                     max-width: 280px;
                 ">Откройте приложение через бота в Telegram, чтобы продолжить</div>
-                <a href="https://t.me/noor_umra_bot" style="
+                <a href="https://t.me/YOUR_BOT_NAME" style="
                     margin-top: 12px;
                     background: linear-gradient(135deg, #10b981, #059669);
                     color: white;
@@ -61,6 +61,45 @@ tg.expand();
 
 tg.setHeaderColor('#0f0f0f');
 tg.setBackgroundColor('#0f0f0f');
+
+// ===== ИНИЦИАЛИЗАЦИЯ ЯЗЫКА =====
+let currentLang = getSavedLanguage();
+applyTranslations(currentLang);
+
+// Обработчик переключения языка
+document.getElementById('language-button').addEventListener('click', () => {
+    const dropdown = document.getElementById('language-dropdown');
+    dropdown.classList.toggle('hidden');
+    tg.HapticFeedback.impactOccurred('light');
+});
+
+document.querySelectorAll('.language-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const lang = btn.getAttribute('data-lang');
+        currentLang = lang;
+        applyTranslations(lang);
+        
+        // Обновить текст кнопки
+        document.getElementById('current-language').textContent = languageConfig[lang].short;
+        
+        // Закрыть dropdown
+        document.getElementById('language-dropdown').classList.add('hidden');
+        
+        // Обновить динамические тексты
+        updateStreak();
+        updateIftarTimer();
+        
+        tg.HapticFeedback.notificationOccurred('success');
+    });
+});
+
+// Закрыть dropdown при клике вне
+document.addEventListener('click', (e) => {
+    const selector = document.querySelector('.language-selector');
+    if (selector && !selector.contains(e.target)) {
+        document.getElementById('language-dropdown').classList.add('hidden');
+    }
+});
 
 // ===== ЕДИНЫЙ ИСТОЧНИК ДАННЫХ =====
 // Все данные хранятся по ключам "ramadan_day_1" ... "ramadan_day_30"
@@ -109,9 +148,7 @@ function calculateStreak() {
 }
 
 function getDaysWord(count) {
-    if (count % 10 === 1 && count % 100 !== 11) return 'день';
-    if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) return 'дня';
-    return 'дней';
+    return getDaysWord(count, currentLang);
 }
 
 // ===== НАВИГАЦИЯ =====
@@ -199,7 +236,7 @@ function updateIftarTimer() {
 
     if (now >= iftarTime) {
         timerEl.textContent = '00:00:00';
-        msgEl.textContent = 'Ифтар начался 🌙';
+        msgEl.textContent = t('iftar-started');
         msgEl.style.color = 'var(--accent-primary)';
         return;
     }
@@ -209,7 +246,7 @@ function updateIftarTimer() {
     const mm = Math.floor((diff % 3600000) / 60000);
     const ss = Math.floor((diff % 60000) / 1000);
     timerEl.textContent = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-    msgEl.textContent = 'осталось';
+    msgEl.textContent = t('iftar-remaining');
 }
 
 // --- Кнопка поста (состояние) ---
@@ -219,10 +256,10 @@ function loadFastingButton() {
 
     if (isDayCompleted(today)) {
         button.classList.add('completed');
-        button.querySelector('.button-text').textContent = 'Сегодня отмечено ✔';
+        button.querySelector('.button-text').textContent = t('fasting-completed');
     } else {
         button.classList.remove('completed');
-        button.querySelector('.button-text').textContent = 'Я держал пост сегодня';
+        button.querySelector('.button-text').textContent = t('fasting-button');
     }
 }
 
@@ -231,7 +268,10 @@ function updateStreak() {
     const streak = calculateStreak();
     const el = document.getElementById('fasting-streak');
     if (streak > 0) {
-        el.textContent = `Вы держите пост ${streak} ${getDaysWord(streak)} подряд`;
+        el.textContent = t('streak-text', {
+            count: streak,
+            days: getDaysWord(streak)
+        });
         el.classList.add('visible');
     } else {
         el.textContent = '';
@@ -304,7 +344,7 @@ function showShareButton() {
 
 document.getElementById('share-button').addEventListener('click', () => {
     const streak = calculateStreak();
-    const appUrl = 'https://t.me/noor_umra_bot/Noor';
+    const appUrl = 'https://t.me/YOUR_BOT_NAME/noor';
     const text = `Я соблюдаю пост уже ${streak} ${getDaysWord(streak)} подряд 🌙 Присоединяйся к Noor Ramadan`;
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(text)}`;
     tg.openTelegramLink(shareUrl);
