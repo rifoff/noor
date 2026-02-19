@@ -568,13 +568,27 @@ body {
     border: 2px solid var(--border-color);
     border-radius: 12px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    padding: 8px 4px;
+}
+
+.calendar-day-number {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.calendar-day-date {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    font-weight: 500;
 }
 
 .calendar-day:hover {
@@ -587,6 +601,10 @@ body {
     color: var(--accent-primary);
 }
 
+.calendar-day.today .calendar-day-date {
+    color: var(--accent-primary);
+}
+
 .calendar-day.completed {
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     border-color: var(--accent-primary);
@@ -594,11 +612,19 @@ body {
     box-shadow: 0 4px 12px var(--accent-glow);
 }
 
+.calendar-day.completed .calendar-day-number,
+.calendar-day.completed .calendar-day-date {
+    color: white;
+}
+
 .calendar-day.completed::after {
     content: '✓';
     position: absolute;
-    font-size: 20px;
+    top: 4px;
+    right: 4px;
+    font-size: 14px;
     color: white;
+    opacity: 0.8;
 }
 
 .calendar-stats {
