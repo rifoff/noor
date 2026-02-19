@@ -191,10 +191,7 @@ const prayerTimes = {
     isha: "20:15"
 };
 
-const prayerNames = {
-    fajr: "Фаджр",
-    dhuhr: "Зухр",
-    asr: "Аср",
-    maghrib: "Магриб",
-    isha: "Иша"
-};
+// Функция для получения переведённого названия намаза
+function getPrayerName(key) {
+    return t(key);
+}
