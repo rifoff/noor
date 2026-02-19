@@ -29,6 +29,11 @@ const translations = {
         // Намаз
         'prayer-title': 'Время намаза',
         'next-prayer': 'Следующий намаз',
+        'fajr': 'Фаджр',
+        'dhuhr': 'Зухр',
+        'asr': 'Аср',
+        'maghrib': 'Магриб',
+        'isha': 'Иша',
         
         // Навигация
         'nav-home': 'Главная',
@@ -65,6 +70,11 @@ const translations = {
         // Prayer
         'prayer-title': 'Prayer Times',
         'next-prayer': 'Next Prayer',
+        'fajr': 'Fajr',
+        'dhuhr': 'Dhuhr',
+        'asr': 'Asr',
+        'maghrib': 'Maghrib',
+        'isha': 'Isha',
         
         // Navigation
         'nav-home': 'Home',
@@ -101,6 +111,11 @@ const translations = {
         // الصلاة
         'prayer-title': 'أوقات الصلاة',
         'next-prayer': 'الصلاة القادمة',
+        'fajr': 'الفجر',
+        'dhuhr': 'الظهر',
+        'asr': 'العصر',
+        'maghrib': 'المغرب',
+        'isha': 'العشاء',
         
         // التنقل
         'nav-home': 'الرئيسية',
