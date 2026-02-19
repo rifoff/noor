@@ -88,6 +88,7 @@ document.querySelectorAll('.language-option').forEach(btn => {
         // Обновить динамические тексты
         updateStreak();
         updateIftarTimer();
+        initPrayerTimes(); // Обновить названия намазов
         
         tg.HapticFeedback.notificationOccurred('success');
     });
@@ -478,7 +479,7 @@ function initPrayerTimes() {
 
         const name = document.createElement('div');
         name.className = 'prayer-name';
-        name.textContent = prayerNames[key];
+        name.textContent = getPrayerName(key);
 
         const time = document.createElement('div');
         time.className = 'prayer-time';
@@ -512,7 +513,7 @@ function updateNextPrayer() {
     });
 
     if (nextKey) {
-        document.getElementById('next-prayer-name').textContent = prayerNames[nextKey];
+        document.getElementById('next-prayer-name').textContent = getPrayerName(nextKey);
         document.querySelectorAll('.prayer-item').forEach(item => {
             item.classList.toggle('active', item.dataset.prayer === nextKey);
         });
@@ -551,10 +552,12 @@ function init() {
 
     initPrayerTimes();
     setInterval(updateNextPrayer, 60000);
+    
+    // Обновление countdown каждую секунду - берём активный намаз из dataset
     setInterval(() => {
-        const nextName = document.getElementById('next-prayer-name').textContent;
-        const key = Object.keys(prayerNames).find(k => prayerNames[k] === nextName);
-        if (key) {
+        const activeItem = document.querySelector('.prayer-item.active');
+        if (activeItem) {
+            const key = activeItem.dataset.prayer;
             const [hh, mm] = prayerTimes[key].split(':');
             updatePrayerCountdown(parseInt(hh) * 60 + parseInt(mm));
         }
