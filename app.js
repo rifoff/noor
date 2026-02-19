@@ -102,11 +102,49 @@ document.addEventListener('click', (e) => {
 });
 
 // ===== ЕДИНЫЙ ИСТОЧНИК ДАННЫХ =====
-// Все данные хранятся по ключам "ramadan_day_1" ... "ramadan_day_30"
-// Сегодня = текущий день месяца (используется как номер дня Рамадана)
+// Дата начала Рамадана 2026
+const RAMADAN_START = new Date('2026-02-18');
+const RAMADAN_DAYS = 30;
 
+// Получить день Рамадана от 1 до 30 на основе текущей даты
 function getTodayDayNumber() {
-    return Math.min(new Date().getDate(), 30);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const start = new Date(RAMADAN_START);
+    start.setHours(0, 0, 0, 0);
+    
+    const diffTime = today - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    
+    // Если до начала Рамадана - вернуть 1
+    if (diffDays < 1) return 1;
+    // Если после окончания - вернуть 30
+    if (diffDays > RAMADAN_DAYS) return RAMADAN_DAYS;
+    
+    return diffDays;
+}
+
+// Получить реальную дату для дня Рамадана
+function getDateForRamadanDay(dayNumber) {
+    const date = new Date(RAMADAN_START);
+    date.setDate(date.getDate() + (dayNumber - 1));
+    return date.toISOString().split('T')[0];
+}
+
+// Получить день Рамадана по реальной дате
+function getRamadanDayFromDate(dateString) {
+    const date = new Date(dateString);
+    date.setHours(0, 0, 0, 0);
+    
+    const start = new Date(RAMADAN_START);
+    start.setHours(0, 0, 0, 0);
+    
+    const diffTime = date - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    
+    if (diffDays < 1 || diffDays > RAMADAN_DAYS) return null;
+    return diffDays;
 }
 
 function getDayKey(dayNumber) {
@@ -127,7 +165,7 @@ function setDayCompleted(dayNumber, value) {
 
 function getAllCompletedDays() {
     const completed = [];
-    for (let i = 1; i <= 30; i++) {
+    for (let i = 1; i <= RAMADAN_DAYS; i++) {
         if (isDayCompleted(i)) completed.push(i);
     }
     return completed;
@@ -358,13 +396,27 @@ function renderCalendar() {
     const today = getTodayDayNumber();
 
     // Если клетки ещё не созданы — создаём
-    if (grid.children.length !== 30) {
+    if (grid.children.length !== RAMADAN_DAYS) {
         grid.innerHTML = '';
-        for (let i = 1; i <= 30; i++) {
+        for (let i = 1; i <= RAMADAN_DAYS; i++) {
             const el = document.createElement('div');
             el.className = 'calendar-day';
             el.dataset.dayNumber = String(i);
-            el.textContent = i;
+            
+            // Создаём контейнер для номера дня
+            const dayNum = document.createElement('div');
+            dayNum.className = 'calendar-day-number';
+            dayNum.textContent = i;
+            
+            // Создаём элемент для реальной даты
+            const realDate = getDateForRamadanDay(i);
+            const dateObj = new Date(realDate);
+            const dateText = document.createElement('div');
+            dateText.className = 'calendar-day-date';
+            dateText.textContent = `${dateObj.getDate()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+            
+            el.appendChild(dayNum);
+            el.appendChild(dateText);
 
             if (i === today) el.classList.add('today');
 
@@ -374,7 +426,7 @@ function renderCalendar() {
     }
 
     // Синхронизируем состояние каждой клетки
-    for (let i = 1; i <= 30; i++) {
+    for (let i = 1; i <= RAMADAN_DAYS; i++) {
         const el = grid.querySelector(`[data-day-number="${i}"]`);
         if (!el) continue;
         if (isDayCompleted(i)) {
