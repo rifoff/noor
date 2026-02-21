@@ -510,13 +510,13 @@ function updateLocationInfo() {
     }
 }
 
-// Обработчик кнопки обновления локации
+// Обработчик кнопки изменения города
 if (document.getElementById('location-change')) {
     document.getElementById('location-change').addEventListener('click', () => {
         const selector = document.getElementById('city-selector');
         const cityList = document.getElementById('city-list');
         
-        // Заполнить список городов
+        // Заполнить список городов только один раз
         if (cityList && cityList.children.length === 0) {
             popularCities.forEach(city => {
                 const btn = document.createElement('button');
@@ -531,13 +531,16 @@ if (document.getElementById('location-change')) {
                     };
                     localStorage.setItem('user_location', JSON.stringify(location));
                     
+                    // Показать индикатор загрузки
+                    const locationText = document.getElementById('location-text');
+                    if (locationText) locationText.textContent = 'Загрузка...';
+                    
+                    // Закрыть селектор сразу
+                    if (selector) selector.classList.add('hidden');
+                    
                     // Обновить времена намаза
-                    document.getElementById('location-text').textContent = 'Загрузка...';
                     await fetchPrayerTimes();
                     initPrayerTimes();
-                    
-                    // Закрыть селектор
-                    selector.classList.add('hidden');
                     
                     tg.HapticFeedback.notificationOccurred('success');
                 };
@@ -545,9 +548,11 @@ if (document.getElementById('location-change')) {
             });
         }
         
-        // Показать/скрыть селектор
-        selector.classList.toggle('hidden');
-        tg.HapticFeedback.impactOccurred('light');
+        // Переключить видимость селектора
+        if (selector) {
+            selector.classList.toggle('hidden');
+            tg.HapticFeedback.impactOccurred('light');
+        }
     });
 }
 
