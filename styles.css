@@ -605,6 +605,16 @@ body {
     color: var(--accent-primary);
 }
 
+.calendar-day.future {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.calendar-day.future:hover {
+    border-color: var(--border-color);
+    transform: none;
+}
+
 .calendar-day.completed {
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     border-color: var(--accent-primary);
