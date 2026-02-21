@@ -196,6 +196,25 @@ function getPrayerName(key) {
     return t(key);
 }
 
+// Популярные города для выбора
+const popularCities = [
+    { name: 'Москва', lat: 55.7558, lon: 37.6173 },
+    { name: 'Санкт-Петербург', lat: 59.9343, lon: 30.3351 },
+    { name: 'Казань', lat: 55.7887, lon: 49.1221 },
+    { name: 'Екатеринбург', lat: 56.8389, lon: 60.6057 },
+    { name: 'Нижний Новгород', lat: 56.3269, lon: 44.0075 },
+    { name: 'Новосибирск', lat: 55.0084, lon: 82.9357 },
+    { name: 'Махачкала', lat: 42.9849, lon: 47.5047 },
+    { name: 'Грозный', lat: 43.3183, lon: 45.6942 },
+    { name: 'Уфа', lat: 54.7388, lon: 55.9721 },
+    { name: 'Стамбул', lat: 41.0082, lon: 28.9784 },
+    { name: 'Дубай', lat: 25.2048, lon: 55.2708 },
+    { name: 'Мекка', lat: 21.4225, lon: 39.8262 },
+    { name: 'Медина', lat: 24.5247, lon: 39.5692 },
+    { name: 'Ташкент', lat: 41.2995, lon: 69.2401 },
+    { name: 'Алматы', lat: 43.2220, lon: 76.8512 }
+];
+
 // Получить координаты из Telegram или использовать дефолтные
 function getUserLocation() {
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
@@ -275,20 +294,75 @@ async function ensurePrayerTimes() {
     await fetchPrayerTimes();
 }
 
-// Запросить геолокацию у пользователя (опционально)
+// Запросить геолокацию через Telegram API
 function requestUserLocation() {
+    const locationText = document.getElementById('location-text');
+    
+    // Проверяем доступность Telegram геолокации
+    if (tg.LocationManager) {
+        try {
+            if (locationText) locationText.textContent = 'Запрос геолокации...';
+            
+            tg.LocationManager.getLocation(async (location) => {
+                if (location && location.latitude && location.longitude) {
+                    const lat = location.latitude;
+                    const lon = location.longitude;
+                    
+                    // Получить название города
+                    let cityName = 'Ваш город';
+                    try {
+                        const geoResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ru`);
+                        const geoData = await geoResponse.json();
+                        cityName = geoData.city || geoData.locality || geoData.principalSubdivision || 'Ваш город';
+                    } catch (error) {
+                        console.log('Failed to get city name');
+                    }
+                    
+                    const locationData = {
+                        latitude: lat,
+                        longitude: lon,
+                        city: cityName
+                    };
+                    localStorage.setItem('user_location', JSON.stringify(locationData));
+                    
+                    // Обновить времена намаза
+                    await fetchPrayerTimes();
+                    initPrayerTimes();
+                    
+                    tg.HapticFeedback.notificationOccurred('success');
+                } else {
+                    if (locationText) locationText.textContent = 'Локация недоступна';
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+            });
+        } catch (error) {
+            console.log('Telegram location API error:', error);
+            // Fallback на браузерную геолокацию
+            requestBrowserLocation();
+        }
+    } else {
+        // Fallback если LocationManager недоступен
+        requestBrowserLocation();
+    }
+}
+
+// Fallback: браузерная геолокация
+function requestBrowserLocation() {
+    const locationText = document.getElementById('location-text');
+    
     if (navigator.geolocation) {
+        if (locationText) locationText.textContent = 'Определение...';
+        
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 
-                // Попытка получить название города через reverse geocoding
-                let cityName = 'Custom Location';
+                let cityName = 'Ваш город';
                 try {
                     const geoResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ru`);
                     const geoData = await geoResponse.json();
-                    cityName = geoData.city || geoData.locality || geoData.principalSubdivision || 'Custom Location';
+                    cityName = geoData.city || geoData.locality || geoData.principalSubdivision || 'Ваш город';
                 } catch (error) {
                     console.log('Failed to get city name');
                 }
@@ -300,18 +374,18 @@ function requestUserLocation() {
                 };
                 localStorage.setItem('user_location', JSON.stringify(location));
                 
-                // Обновить времена с новой локацией
                 await fetchPrayerTimes();
                 initPrayerTimes();
                 
                 tg.HapticFeedback.notificationOccurred('success');
             },
             (error) => {
-                console.log('Geolocation denied or unavailable');
-                const text = document.getElementById('location-text');
-                if (text) text.textContent = 'Геолокация недоступна';
+                console.log('Browser geolocation denied:', error);
+                if (locationText) locationText.textContent = 'Москва (по умолчанию)';
                 tg.HapticFeedback.notificationOccurred('error');
             }
         );
+    } else {
+        if (locationText) locationText.textContent = 'Москва (по умолчанию)';
     }
 }
