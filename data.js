@@ -182,8 +182,8 @@ const ayatData = [
     }
 ];
 
-// Данные времени намаза (моковые)
-const prayerTimes = {
+// Данные времени намаза (будут загружены по геолокации)
+let prayerTimes = {
     fajr: "05:12",
     dhuhr: "12:43",
     asr: "16:10",
@@ -194,4 +194,124 @@ const prayerTimes = {
 // Функция для получения переведённого названия намаза
 function getPrayerName(key) {
     return t(key);
+}
+
+// Получить координаты из Telegram или использовать дефолтные
+function getUserLocation() {
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    
+    // Пытаемся получить сохранённые координаты
+    const saved = localStorage.getItem('user_location');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    
+    // Дефолтные координаты (Москва) если геолокация недоступна
+    return {
+        latitude: 55.7558,
+        longitude: 37.6173,
+        city: 'Moscow'
+    };
+}
+
+// Загрузить времена намаза с Aladhan API
+async function fetchPrayerTimes() {
+    try {
+        const location = getUserLocation();
+        const date = new Date();
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        
+        // API запрос к Aladhan
+        const url = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${location.latitude}&longitude=${location.longitude}&method=2`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.code === 200 && data.data.timings) {
+            const timings = data.data.timings;
+            
+            // Обновляем времена намаза
+            prayerTimes = {
+                fajr: timings.Fajr,
+                dhuhr: timings.Dhuhr,
+                asr: timings.Asr,
+                maghrib: timings.Maghrib,
+                isha: timings.Isha
+            };
+            
+            // Сохраняем в localStorage с датой
+            localStorage.setItem('prayer_times', JSON.stringify({
+                times: prayerTimes,
+                date: `${year}-${month}-${day}`,
+                location: location
+            }));
+            
+            return true;
+        }
+    } catch (error) {
+        console.error('Failed to fetch prayer times:', error);
+    }
+    
+    return false;
+}
+
+// Проверить нужно ли обновить времена намаза
+async function ensurePrayerTimes() {
+    const today = new Date().toISOString().split('T')[0];
+    const saved = localStorage.getItem('prayer_times');
+    
+    if (saved) {
+        const data = JSON.parse(saved);
+        // Если данные за сегодня - используем их
+        if (data.date === today) {
+            prayerTimes = data.times;
+            return;
+        }
+    }
+    
+    // Загружаем новые времена
+    await fetchPrayerTimes();
+}
+
+// Запросить геолокацию у пользователя (опционально)
+function requestUserLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                // Попытка получить название города через reverse geocoding
+                let cityName = 'Custom Location';
+                try {
+                    const geoResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ru`);
+                    const geoData = await geoResponse.json();
+                    cityName = geoData.city || geoData.locality || geoData.principalSubdivision || 'Custom Location';
+                } catch (error) {
+                    console.log('Failed to get city name');
+                }
+                
+                const location = {
+                    latitude: lat,
+                    longitude: lon,
+                    city: cityName
+                };
+                localStorage.setItem('user_location', JSON.stringify(location));
+                
+                // Обновить времена с новой локацией
+                await fetchPrayerTimes();
+                initPrayerTimes();
+                
+                tg.HapticFeedback.notificationOccurred('success');
+            },
+            (error) => {
+                console.log('Geolocation denied or unavailable');
+                const text = document.getElementById('location-text');
+                if (text) text.textContent = 'Геолокация недоступна';
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+        );
+    }
 }
