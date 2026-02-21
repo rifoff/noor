@@ -172,17 +172,28 @@ function getAllCompletedDays() {
     return completed;
 }
 
-// Streak = последовательные дни, заканчивающиеся сегодняшним днём
+// Streak = последовательные отмеченные дни
 function calculateStreak() {
     const today = getTodayDayNumber();
     let streak = 0;
-    for (let i = today; i >= 1; i--) {
+    
+    // Если сегодня отмечен - начинаем с сегодня
+    let startDay = today;
+    
+    // Если сегодня не отмечен - начинаем со вчера
+    if (!isDayCompleted(today)) {
+        startDay = today - 1;
+    }
+    
+    // Считаем последовательные дни назад
+    for (let i = startDay; i >= 1; i--) {
         if (isDayCompleted(i)) {
             streak++;
         } else {
             break;
         }
     }
+    
     return streak;
 }
 
