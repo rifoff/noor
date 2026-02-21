@@ -491,6 +491,44 @@ function initPrayerTimes() {
     });
 
     updateNextPrayer();
+    updateLocationInfo();
+}
+
+// Обновить информацию о локации
+function updateLocationInfo() {
+    const locationText = document.getElementById('location-text');
+    if (!locationText) return;
+    
+    const saved = localStorage.getItem('prayer_times');
+    if (saved) {
+        const data = JSON.parse(saved);
+        if (data.location && data.location.city) {
+            locationText.textContent = data.location.city;
+        } else {
+            locationText.textContent = 'Локация по умолчанию';
+        }
+    }
+}
+
+// Обработчик кнопки обновления локации
+if (document.getElementById('location-refresh')) {
+    document.getElementById('location-refresh').addEventListener('click', async () => {
+        const btn = document.getElementById('location-refresh');
+        const text = document.getElementById('location-text');
+        
+        btn.style.opacity = '0.3';
+        text.textContent = 'Определение...';
+        
+        tg.HapticFeedback.impactOccurred('light');
+        
+        // Запросить геолокацию
+        requestUserLocation();
+        
+        setTimeout(() => {
+            btn.style.opacity = '0.6';
+            updateLocationInfo();
+        }, 2000);
+    });
 }
 
 function updateNextPrayer() {
@@ -537,7 +575,10 @@ function updatePrayerCountdown(prayerMins) {
 
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 
-function init() {
+async function init() {
+    // Загрузить времена намаза перед инициализацией
+    await ensurePrayerTimes();
+    
     updateUmmahCounter();
     loadDailyAyat();
     loadFastingButton();
@@ -562,6 +603,23 @@ function init() {
             updatePrayerCountdown(parseInt(hh) * 60 + parseInt(mm));
         }
     }, 1000);
+    
+    // Обновлять времена намаза каждый день в полночь
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilMidnight = tomorrow - now;
+    
+    setTimeout(async () => {
+        await fetchPrayerTimes();
+        initPrayerTimes();
+        // Повторять каждые 24 часа
+        setInterval(async () => {
+            await fetchPrayerTimes();
+            initPrayerTimes();
+        }, 24 * 60 * 60 * 1000);
+    }, msUntilMidnight);
 }
 
 init();
