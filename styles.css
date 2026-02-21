@@ -721,7 +721,7 @@ body {
     text-align: center;
 }
 
-.location-refresh {
+.location-change {
     background: none;
     border: none;
     font-size: 14px;
@@ -731,9 +731,56 @@ body {
     transition: all 0.3s ease;
 }
 
-.location-refresh:hover {
+.location-change:hover {
     opacity: 1;
-    transform: rotate(90deg);
+    transform: scale(1.1);
+}
+
+/* Селектор города */
+.city-selector {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.city-selector.hidden {
+    display: none;
+}
+
+.city-selector-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.city-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.city-option {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.city-option:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
 }
 
 .prayer-times-list {
