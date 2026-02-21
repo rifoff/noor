@@ -511,23 +511,43 @@ function updateLocationInfo() {
 }
 
 // Обработчик кнопки обновления локации
-if (document.getElementById('location-refresh')) {
-    document.getElementById('location-refresh').addEventListener('click', async () => {
-        const btn = document.getElementById('location-refresh');
-        const text = document.getElementById('location-text');
+if (document.getElementById('location-change')) {
+    document.getElementById('location-change').addEventListener('click', () => {
+        const selector = document.getElementById('city-selector');
+        const cityList = document.getElementById('city-list');
         
-        btn.style.opacity = '0.3';
-        text.textContent = 'Определение...';
+        // Заполнить список городов
+        if (cityList && cityList.children.length === 0) {
+            popularCities.forEach(city => {
+                const btn = document.createElement('button');
+                btn.className = 'city-option';
+                btn.textContent = city.name;
+                btn.onclick = async () => {
+                    // Сохранить выбранный город
+                    const location = {
+                        latitude: city.lat,
+                        longitude: city.lon,
+                        city: city.name
+                    };
+                    localStorage.setItem('user_location', JSON.stringify(location));
+                    
+                    // Обновить времена намаза
+                    document.getElementById('location-text').textContent = 'Загрузка...';
+                    await fetchPrayerTimes();
+                    initPrayerTimes();
+                    
+                    // Закрыть селектор
+                    selector.classList.add('hidden');
+                    
+                    tg.HapticFeedback.notificationOccurred('success');
+                };
+                cityList.appendChild(btn);
+            });
+        }
         
+        // Показать/скрыть селектор
+        selector.classList.toggle('hidden');
         tg.HapticFeedback.impactOccurred('light');
-        
-        // Запросить геолокацию
-        requestUserLocation();
-        
-        setTimeout(() => {
-            btn.style.opacity = '0.6';
-            updateLocationInfo();
-        }, 2000);
     });
 }
 
