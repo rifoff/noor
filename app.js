@@ -430,6 +430,14 @@ function renderCalendar() {
     for (let i = 1; i <= RAMADAN_DAYS; i++) {
         const el = grid.querySelector(`[data-day-number="${i}"]`);
         if (!el) continue;
+        
+        // Отметить будущие дни
+        if (i > today) {
+            el.classList.add('future');
+        } else {
+            el.classList.remove('future');
+        }
+        
         if (isDayCompleted(i)) {
             el.classList.add('completed');
         } else {
@@ -441,6 +449,15 @@ function renderCalendar() {
 }
 
 function toggleCalendarDay(dayNumber) {
+    const today = getTodayDayNumber();
+    
+    // Запретить отмечать будущие дни
+    if (dayNumber > today) {
+        tg.showAlert('Этот день ещё не наступил');
+        tg.HapticFeedback.notificationOccurred('error');
+        return;
+    }
+    
     const wasCompleted = isDayCompleted(dayNumber);
     setDayCompleted(dayNumber, !wasCompleted);
 
