@@ -157,10 +157,50 @@ function isDayCompleted(dayNumber) {
 }
 
 function setDayCompleted(dayNumber, value) {
+    const key = getDayKey(dayNumber);
     if (value) {
-        localStorage.setItem(getDayKey(dayNumber), 'true');
+        localStorage.setItem(key, 'true');
+        // Дублируем в CloudStorage для надёжности
+        if (tg.CloudStorage) {
+            tg.CloudStorage.setItem(key, 'true');
+        }
     } else {
-        localStorage.removeItem(getDayKey(dayNumber));
+        localStorage.removeItem(key);
+        if (tg.CloudStorage) {
+            tg.CloudStorage.removeItem(key);
+        }
+    }
+}
+
+// Загрузить данные из CloudStorage при старте
+async function loadDataFromCloud() {
+    if (!tg.CloudStorage) return;
+    
+    try {
+        // Загрузить все ключи дней Рамадана
+        const keys = [];
+        for (let i = 1; i <= 30; i++) {
+            keys.push(`ramadan_day_${i}`);
+        }
+        
+        tg.CloudStorage.getItems(keys, (error, items) => {
+            if (!error && items) {
+                // Синхронизировать с localStorage
+                Object.keys(items).forEach(key => {
+                    if (items[key] === 'true') {
+                        localStorage.setItem(key, 'true');
+                    }
+                });
+                
+                // Обновить UI после загрузки
+                updateProgress();
+                updateAchievements();
+                updateStreak();
+                renderCalendar();
+            }
+        });
+    } catch (error) {
+        console.log('CloudStorage load failed:', error);
     }
 }
 
@@ -233,6 +273,14 @@ function refreshHomeScreen() {
     updateProgress();
     updateAchievements();
     showShareButton();
+    
+    // Проверить что времена намаза загружены
+    if (!prayerTimes || prayerTimes.fajr === "05:12") {
+        // Если дефолтные времена - перезагрузить
+        ensurePrayerTimes().then(() => {
+            updateIftarTimer();
+        });
+    }
 }
 
 // --- Счётчик Уммы ---
@@ -276,6 +324,15 @@ function loadDailyAyat() {
 
 // --- Таймер до ифтара ---
 function updateIftarTimer() {
+    // Проверить что времена загружены
+    if (!prayerTimes || !prayerTimes.maghrib || prayerTimes.maghrib === "18:52") {
+        const timerEl = document.getElementById('iftar-timer');
+        const msgEl = document.getElementById('iftar-message');
+        if (timerEl) timerEl.textContent = '--:--:--';
+        if (msgEl) msgEl.textContent = 'Загрузка...';
+        return;
+    }
+    
     const now = new Date();
     const iftarTime = new Date();
     const [h, m] = prayerTimes.maghrib.split(':');
@@ -629,6 +686,9 @@ function updatePrayerCountdown(prayerMins) {
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 
 async function init() {
+    // Загрузить данные из CloudStorage
+    await loadDataFromCloud();
+    
     // Загрузить времена намаза перед инициализацией
     await ensurePrayerTimes();
     
